@@ -1,7 +1,15 @@
-// Request notification permission once at startup
-if (Notification.permission !== "granted") {
-  Notification.requestPermission();
-}
+// Ask for notification permission immediately when site loads
+document.addEventListener("DOMContentLoaded", () => {
+  if (Notification.permission !== "granted") {
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        console.log("Notifications enabled!");
+      } else {
+        console.log("Notifications denied.");
+      }
+    });
+  }
+});
 
 const taskForm = document.getElementById("taskForm");
 const taskList = document.getElementById("taskList");

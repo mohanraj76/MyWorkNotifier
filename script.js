@@ -169,7 +169,8 @@ function triggerAlarm(task) {
 
   alarmControls.classList.remove("hidden");
 
-  showNotification(`${task.emoji || "⏰"} Task Reminder`, task.name);
+  // Use the task emoji in the notification title
+  showNotification(`${task.emoji || ""} Task Reminder`, task.name);
 }
 
 // Notification function
@@ -177,10 +178,12 @@ function showNotification(title, bodyText) {
   if (Notification.permission === "granted") {
     new Notification(title, {
       body: bodyText,
+      // You can also set a custom icon if you want, but the emoji will show in the title/body
       icon: "https://cdn-icons-png.flaticon.com/512/1827/1827312.png"
     });
   }
 }
+
 
 // Pause and Stop buttons
 pauseBtn.addEventListener("click", () => {

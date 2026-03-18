@@ -8,12 +8,11 @@ body {
 .dashboard-container {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr; /* left, center, right */
-  grid-template-rows: auto auto auto; /* top, middle, bottom */
+  grid-template-rows: auto auto auto;
   gap: 20px;
   height: 100vh;
 }
 
-/* Generic box styling */
 .dashboard-box {
   background: #fff;
   border-radius: 16px;
@@ -28,26 +27,11 @@ body {
   color: #333;
 }
 
-/* Tall boxes on left and right */
-.tall {
-  grid-row: 1 / span 3; /* spans all rows */
-}
+.tall { grid-row: 1 / span 3; }
+.small { grid-row: 1; }
+.large { grid-row: 2 / span 2; }
 
-/* Small boxes in top center row */
-.small {
-  grid-row: 1;
-}
-
-/* Large boxes in bottom center row */
-.large {
-  grid-row: 2 / span 2;
-}
-
-/* Lists */
-ul {
-  list-style: none;
-  padding: 0;
-}
+ul { list-style: none; padding: 0; }
 
 li {
   background: #f9f9f9;
@@ -59,17 +43,9 @@ li {
   align-items: center;
 }
 
-li.completed {
-  text-decoration: line-through;
-  color: #777;
-}
+li.completed { text-decoration: line-through; color: #777; }
+li.deleted { color: #999; font-style: italic; }
 
-li.deleted {
-  color: #999;
-  font-style: italic;
-}
-
-/* Buttons inside tasks */
 .task-actions button,
 .restore-btn {
   margin-left: 8px;
@@ -83,7 +59,6 @@ li.deleted {
 .delete-btn { background: #f44336; color: white; }
 .restore-btn { background: #4CAF50; color: white; }
 
-/* Alarm controls */
 #alarmControls {
   margin-top: 10px;
   padding: 10px;
@@ -93,9 +68,7 @@ li.deleted {
   text-align: center;
 }
 
-#alarmControls.hidden {
-  display: none;
-}
+#alarmControls.hidden { display: none; }
 
 #alarmControls button {
   margin: 5px;
@@ -108,7 +81,6 @@ li.deleted {
 #pauseAlarm { background: #2196F3; color: white; }
 #stopAlarm { background: #f44336; color: white; }
 
-/* Form styling */
 form {
   display: flex;
   flex-direction: column;
@@ -128,6 +100,4 @@ form button {
   border: none;
 }
 
-form button:hover {
-  background: #45a049;
-}
+form button:hover { background: #45a049; }

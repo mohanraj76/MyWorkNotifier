@@ -1,19 +1,14 @@
-// Ask for notification permission immediately when site loads
 document.addEventListener("DOMContentLoaded", () => {
   if (Notification.permission !== "granted") {
-    Notification.requestPermission().then(permission => {
-      if (permission === "granted") {
-        console.log("Notifications enabled!");
-      } else {
-        console.log("Notifications denied.");
-      }
-    });
+    Notification.requestPermission();
   }
 });
 
 const taskForm = document.getElementById("taskForm");
 const taskList = document.getElementById("taskList");
 const completedList = document.getElementById("completedList");
+const deletedList = document.getElementById("deletedList");
+const recurringList = document.getElementById("recurringList");
 const alarmControls = document.getElementById("alarmControls");
 const pauseBtn = document.getElementById("pauseAlarm");
 const stopBtn = document.getElementById("stopAlarm");
@@ -21,14 +16,25 @@ const testBtn = document.getElementById("testAlarm");
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 let completedTasks = JSON.parse(localStorage.getItem("completedTasks")) || [];
+let deletedTasks = JSON.parse(localStorage.getItem("deletedTasks")) || [];
 let alarmAudio = null;
 
-// Render tasks
+function saveAll() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem("completedTasks", JSON.stringify(completedTasks));
+  localStorage.setItem("deletedTasks", JSON.stringify(deletedTasks));
+}
+
+// Render tasks into separate components
 function renderTasks() {
   taskList.innerHTML = "";
+  recurringList.innerHTML = "";
+  completedList.innerHTML = "";
+  deletedList.innerHTML = "";
+
   tasks.forEach((task, index) => {
     const li = document.createElement("li");
-    li.textContent = `${task.name} - ${new Date(task.time).toLocaleString()}`;
+    li.textContent = `${task.emoji || ""} ${task.name} - ${new Date(task.time).toLocaleString()} (${task.repeat})`;
 
     const actions = document.createElement("div");
     actions.classList.add("task-actions");
@@ -47,15 +53,33 @@ function renderTasks() {
     actions.appendChild(deleteBtn);
     li.appendChild(actions);
 
-    taskList.appendChild(li);
+    // Separate recurring tasks visually
+    if (task.repeat !== "none") {
+      recurringList.appendChild(li);
+    } else {
+      taskList.appendChild(li);
+    }
   });
 
-  completedList.innerHTML = "";
   completedTasks.forEach((task) => {
     const li = document.createElement("li");
-    li.textContent = `${task.name} - ${new Date(task.time).toLocaleString()}`;
+    li.textContent = `${task.emoji || ""} ${task.name} - ${new Date(task.time).toLocaleString()}`;
     li.classList.add("completed");
     completedList.appendChild(li);
+  });
+
+  deletedTasks.forEach((task, index) => {
+    const li = document.createElement("li");
+    li.textContent = `${task.emoji || ""} ${task.name} - ${new Date(task.time).toLocaleString()}`;
+    li.classList.add("deleted");
+
+    const restoreBtn = document.createElement("button");
+    restoreBtn.textContent = "Restore";
+    restoreBtn.classList.add("restore-btn");
+    restoreBtn.onclick = () => restoreTask(index);
+
+    li.appendChild(restoreBtn);
+    deletedList.appendChild(li);
   });
 }
 renderTasks();
@@ -65,18 +89,29 @@ taskForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const name = document.getElementById("taskName").value;
   const time = document.getElementById("taskTime").value;
+  const emoji = document.getElementById("taskEmoji").value;
+  const repeat = document.getElementById("taskRepeat").value;
 
-  const newTask = { name, time };
+  const newTask = { name, time, emoji, repeat };
   tasks.push(newTask);
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+  saveAll();
   renderTasks();
   taskForm.reset();
 });
 
 // Delete task
 function deleteTask(index) {
-  tasks.splice(index, 1);
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+  const task = tasks.splice(index, 1)[0];
+  deletedTasks.push(task);
+  saveAll();
+  renderTasks();
+}
+
+// Restore task
+function restoreTask(index) {
+  const task = deletedTasks.splice(index, 1)[0];
+  tasks.push(task);
+  saveAll();
   renderTasks();
 }
 
@@ -84,8 +119,17 @@ function deleteTask(index) {
 function markComplete(index) {
   const task = tasks.splice(index, 1)[0];
   completedTasks.push(task);
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  localStorage.setItem("completedTasks", JSON.stringify(completedTasks));
+
+  // Handle recurrence
+  if (task.repeat !== "none") {
+    const nextTime = new Date(task.time);
+    if (task.repeat === "daily") nextTime.setDate(nextTime.getDate() + 1);
+    if (task.repeat === "weekly") nextTime.setDate(nextTime.getDate() + 7);
+    if (task.repeat === "monthly") nextTime.setMonth(nextTime.getMonth() + 1);
+    tasks.push({ ...task, time: nextTime.toISOString() });
+  }
+
+  saveAll();
   renderTasks();
 }
 
@@ -101,7 +145,7 @@ setInterval(() => {
       taskTime.getHours() === now.getHours() &&
       taskTime.getMinutes() === now.getMinutes()
     ) {
-      triggerAlarm(task.name);
+      triggerAlarm(task);
     }
   });
 
@@ -112,31 +156,28 @@ setInterval(() => {
       return taskDate.toDateString() === now.toDateString();
     });
     if (todayTasks.length > 0) {
-      showNotification("📌 Today's Tasks", todayTasks.map(t => t.name).join(", "));
+      showNotification("📌 Today's Tasks", todayTasks.map(t => `${t.emoji || ""} ${t.name}`).join(", "));
     }
   }
 }, 60000);
 
 // Trigger alarm immediately + notification
-function triggerAlarm(taskName) {
-  // Play audio instantly
-  alarmAudio = new Audio("alarm.mp3"); // <-- place your audio file in project folder
+function triggerAlarm(task) {
+  alarmAudio = new Audio("alarm.mp3");
   alarmAudio.loop = true;
   alarmAudio.play();
 
-  // Show control panel
   alarmControls.classList.remove("hidden");
 
-  // Fire Windows notification simultaneously
-  showNotification("⏰ Task Reminder", taskName);
+  showNotification(`${task.emoji || "⏰"} Task Reminder`, task.name);
 }
 
-// Notification function using Windows toast style
+// Notification function
 function showNotification(title, bodyText) {
   if (Notification.permission === "granted") {
     new Notification(title, {
       body: bodyText,
-      icon: "https://cdn-icons-png.flaticon.com/512/1827/1827312.png" // optional icon
+      icon: "https://cdn-icons-png.flaticon.com/512/1827/1827312.png"
     });
   }
 }
@@ -165,5 +206,5 @@ stopBtn.addEventListener("click", () => {
 
 // Test button to verify notifications + alarm
 testBtn.addEventListener("click", () => {
-  triggerAlarm("Test Alarm");
+  triggerAlarm({ name: "Test Alarm", emoji: "🔔", repeat: "none", time: new Date().toISOString() });
 });

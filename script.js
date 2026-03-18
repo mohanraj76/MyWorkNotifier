@@ -25,7 +25,6 @@ function saveAll() {
   localStorage.setItem("deletedTasks", JSON.stringify(deletedTasks));
 }
 
-// Render tasks into separate components
 function renderTasks() {
   taskList.innerHTML = "";
   recurringList.innerHTML = "";
@@ -53,7 +52,6 @@ function renderTasks() {
     actions.appendChild(deleteBtn);
     li.appendChild(actions);
 
-    // Separate recurring tasks visually
     if (task.repeat !== "none") {
       recurringList.appendChild(li);
     } else {
@@ -84,22 +82,21 @@ function renderTasks() {
 }
 renderTasks();
 
-// Add task
 taskForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const name = document.getElementById("taskName").value;
   const time = document.getElementById("taskTime").value;
   const emoji = document.getElementById("taskEmoji").value;
+  const icon = document.getElementById("taskIcon").value;
   const repeat = document.getElementById("taskRepeat").value;
 
-  const newTask = { name, time, emoji, repeat };
+  const newTask = { name, time, emoji, repeat, icon };
   tasks.push(newTask);
   saveAll();
   renderTasks();
   taskForm.reset();
 });
 
-// Delete task
 function deleteTask(index) {
   const task = tasks.splice(index, 1)[0];
   deletedTasks.push(task);
@@ -107,7 +104,6 @@ function deleteTask(index) {
   renderTasks();
 }
 
-// Restore task
 function restoreTask(index) {
   const task = deletedTasks.splice(index, 1)[0];
   tasks.push(task);
@@ -115,7 +111,6 @@ function restoreTask(index) {
   renderTasks();
 }
 
-// Mark task complete
 function markComplete(index) {
   const task = tasks.splice(index, 1)[0];
   completedTasks.push(task);
@@ -133,7 +128,6 @@ function markComplete(index) {
   renderTasks();
 }
 
-// Check tasks every minute
 setInterval(() => {
   const now = new Date();
   tasks.forEach((task) => {
@@ -161,7 +155,6 @@ setInterval(() => {
   }
 }, 60000);
 
-// Trigger alarm immediately + notification
 function triggerAlarm(task) {
   alarmAudio = new Audio("alarm.mp3");
   alarmAudio.loop = true;
@@ -169,23 +162,18 @@ function triggerAlarm(task) {
 
   alarmControls.classList.remove("hidden");
 
-  // Use the task emoji in the notification title
-  showNotification(`${task.emoji || ""} Task Reminder`, task.name);
+  showNotification(`${task.emoji || ""} Task Reminder`, task.name, task.icon);
 }
 
-// Notification function
-function showNotification(title, bodyText) {
+function showNotification(title, bodyText, iconUrl) {
   if (Notification.permission === "granted") {
     new Notification(title, {
       body: bodyText,
-      // You can also set a custom icon if you want, but the emoji will show in the title/body
-      icon: "https://cdn-icons-png.flaticon.com/512/1827/1827312.png"
+      icon: iconUrl || "" // use user-chosen icon if available
     });
   }
 }
 
-
-// Pause and Stop buttons
 pauseBtn.addEventListener("click", () => {
   if (alarmAudio) {
     if (alarmAudio.paused) {
@@ -207,7 +195,6 @@ stopBtn.addEventListener("click", () => {
   }
 });
 
-// Test button to verify notifications + alarm
 testBtn.addEventListener("click", () => {
-  triggerAlarm({ name: "Test Alarm", emoji: "🔔", repeat: "none", time: new Date().toISOString() });
+  triggerAlarm({ name: "Test Alarm", emoji: "😂", repeat: "none", time: new Date().toISOString(), icon: "https://cdn-icons-png.flaticon.com/512/1827/1827312.png" });
 });

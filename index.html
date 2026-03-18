@@ -2,35 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Task Reminder App</title>
+  <title>Task Reminder Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="app-container">
-    <h1>📝 Task Reminder</h1>
-    <form id="taskForm">
-      <input type="text" id="taskName" placeholder="Enter task..." required>
-      <input type="datetime-local" id="taskTime" required>
-      <button type="submit">Add Task</button>
-    </form>
+  <div class="dashboard-container">
 
-    <h2>Upcoming Tasks</h2>
-    <ul id="taskList"></ul>
+    <!-- Left Tall Box: Upcoming Tasks -->
+    <section class="dashboard-box tall">
+      <h2>📅 Upcoming Tasks</h2>
+      <ul id="taskList"></ul>
+    </section>
 
-    <h2>✅ Completed Tasks</h2>
-    <ul id="completedList"></ul>
+    <!-- Right Tall Box: Recurring Tasks -->
+    <section class="dashboard-box tall">
+      <h2>🔄 Recurring Tasks</h2>
+      <ul id="recurringList"></ul>
+    </section>
 
-    <!-- Alarm Control Panel -->
-    <div id="alarmControls" class="hidden">
-      <p>🔔 Alarm is ringing!</p>
-      <button id="pauseAlarm">Pause</button>
-      <button id="stopAlarm">Stop</button>
-    </div>
+    <!-- Top Center Small Box: Task Form -->
+    <section class="dashboard-box small">
+      <h2>➕ Add Task</h2>
+      <form id="taskForm">
+        <input type="text" id="taskName" placeholder="Task name..." required>
+        <input type="datetime-local" id="taskTime" required>
+        <input type="text" id="taskEmoji" placeholder="Emoji (e.g. 🔔)" maxlength="2">
+        <select id="taskRepeat">
+          <option value="none">No Repeat</option>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+        <button type="submit">Add</button>
+      </form>
+    </section>
 
-    <!-- Test Button -->
-    <div style="margin-top:20px; text-align:center;">
+    <!-- Top Center Small Box: Alarm Controls -->
+    <section class="dashboard-box small">
+      <h2>🔔 Alarm Controls</h2>
+      <div id="alarmControls" class="hidden">
+        <p>Alarm is ringing!</p>
+        <button id="pauseAlarm">Pause</button>
+        <button id="stopAlarm">Stop</button>
+      </div>
       <button id="testAlarm">Test Alarm + Notification</button>
-    </div>
+    </section>
+
+    <!-- Bottom Center Large Box: Completed Tasks -->
+    <section class="dashboard-box large">
+      <h2>✅ Completed Tasks</h2>
+      <ul id="completedList"></ul>
+    </section>
+
+    <!-- Bottom Center Large Box: Deleted Tasks -->
+    <section class="dashboard-box large">
+      <h2>🗑️ Deleted Tasks</h2>
+      <ul id="deletedList"></ul>
+    </section>
+
   </div>
 
   <script src="script.js"></script>

@@ -6,27 +6,21 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Top bar with title and live clock -->
+  <header class="top-bar">
+    <h1>📝 Task Reminder Dashboard</h1>
+    <div id="timerClock"></div>
+  </header>
+
   <div class="dashboard-container">
 
-    <!-- Left Tall Box: Upcoming Tasks -->
-    <section class="dashboard-box tall">
-      <h2>📅 Upcoming Tasks</h2>
-      <ul id="taskList"></ul>
-    </section>
-
-    <!-- Right Tall Box: Recurring Tasks -->
-    <section class="dashboard-box tall">
-      <h2>🔄 Recurring Tasks</h2>
-      <ul id="recurringList"></ul>
-    </section>
-
-    <!-- Top Center Small Box: Task Form -->
+    <!-- Add Task -->
     <section class="dashboard-box small">
       <h2>➕ Add Task</h2>
       <form id="taskForm">
         <input type="text" id="taskName" placeholder="Task name..." required>
+        <textarea id="taskDesc" placeholder="Description..."></textarea>
         <input type="datetime-local" id="taskTime" required>
-        <input type="text" id="taskEmoji" placeholder="Emoji (e.g. 🔔)" maxlength="2">
         <input type="text" id="taskIcon" placeholder="Icon URL (optional)">
         <select id="taskRepeat">
           <option value="none">No Repeat</option>
@@ -34,31 +28,46 @@
           <option value="weekly">Weekly</option>
           <option value="monthly">Monthly</option>
         </select>
+        <div id="repeatOptions"></div>
         <button type="submit">Add</button>
       </form>
     </section>
 
-    <!-- Top Center Small Box: Alarm Controls -->
+    <!-- Today’s Work (in place of Recurring Tasks) -->
     <section class="dashboard-box small">
-      <h2>🔔 Alarm Controls</h2>
-      <div id="alarmControls" class="hidden">
-        <p>Alarm is ringing!</p>
-        <button id="pauseAlarm">Pause</button>
-        <button id="stopAlarm">Stop</button>
-      </div>
-      <button id="testAlarm">Test Alarm + Notification</button>
+      <h2>📌 Today’s Work</h2>
+      <input type="text" id="searchToday" placeholder="Search by title or date">
+      <ul id="todayList"></ul>
     </section>
 
-    <!-- Bottom Center Large Box: Completed Tasks -->
+    <!-- Upcoming Tasks -->
+    <section class="dashboard-box tall">
+      <h2>📅 Upcoming Tasks</h2>
+      <ul id="taskList"></ul>
+    </section>
+
+    <!-- Pending Tasks -->
+    <section class="dashboard-box tall">
+      <h2>⏳ Pending Tasks</h2>
+      <ul id="pendingList"></ul>
+    </section>
+
+    <!-- Completed Tasks -->
     <section class="dashboard-box large">
       <h2>✅ Completed Tasks</h2>
       <ul id="completedList"></ul>
     </section>
 
-    <!-- Bottom Center Large Box: Deleted Tasks -->
+    <!-- Deleted Tasks -->
     <section class="dashboard-box large">
       <h2>🗑️ Deleted Tasks</h2>
       <ul id="deletedList"></ul>
+    </section>
+
+    <!-- Recurring Tasks (moved below Add Task if you still want it) -->
+    <section class="dashboard-box large">
+      <h2>🔄 Recurring Tasks</h2>
+      <ul id="recurringList"></ul>
     </section>
 
   </div>

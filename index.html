@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Reminder App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <h1>📝 Task Reminder</h1>
+    <form id="taskForm">
+      <input type="text" id="taskName" placeholder="Enter task..." required>
+      <input type="datetime-local" id="taskTime" required>
+      <button type="submit">Add Task</button>
+    </form>
+
+    <h2>Upcoming Tasks</h2>
+    <ul id="taskList"></ul>
+
+    <h2>✅ Completed Tasks</h2>
+    <ul id="completedList"></ul>
+
+    <!-- Alarm Control Panel -->
+    <div id="alarmControls" class="hidden">
+      <p>🔔 Alarm is ringing!</p>
+      <button id="pauseAlarm">Pause</button>
+      <button id="stopAlarm">Stop</button>
+    </div>
+
+    <!-- Test Button -->
+    <div style="margin-top:20px; text-align:center;">
+      <button id="testAlarm">Test Alarm + Notification</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
